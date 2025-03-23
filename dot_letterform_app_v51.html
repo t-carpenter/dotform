@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dotform</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #F7F8F2;
+    }
+
+    #controls {
+      background-color: #F7F8F2;
+      color: #282634;
+      padding: 20px;
+      width: 250px;
+      box-sizing: border-box;
+      height: 100vh;
+      position: relative;
+    }
+
+    #controls h1 {
+      font-size: 20px;
+      margin: 0 0 40px 0;
+    }
+
+    #controls label {
+      display: block;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    input[type=text] {
+      border: none;
+      background: #fff;
+      padding: 8px;
+      width: 100%;
+      border-radius: 0px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 1px;
+      background: #282634;
+      border-radius: 1px;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 12px;
+      width: 12px;
+      background: #282634;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -6.5px;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      height: 12px;
+      width: 12px;
+      background: #282634;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    input[type=range]::-ms-thumb {
+      height: 12px;
+      width: 12px;
+      background: #282634;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    input[type=range]::-moz-range-track {
+      height: 1px;
+      background: #282634;
+      border-radius: 1px;
+    }
+
+    input[type=range]::-ms-track {
+      height: 1px;
+      background: transparent;
+      border-color: transparent;
+      color: transparent;
+    }
+
+    input[type=range]::-ms-fill-lower,
+    input[type=range]::-ms-fill-upper {
+      background: #282634;
+      border-radius: 1px;
+    }
+
+    #resetBtn {
+      background-color: #282634;
+      color: #F7F8F2;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    #resetBtn:hover {
+      background-color: #1BE21B;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      font-size: 11px;
+      color: #282634;
+    }
+
+    #canvas-container {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #F7F8F2;
+    }
+
+    canvas {
+      display: block;
+    }
+  
+    .actionBtn {
+      background-color: #282634;
+      color: #F7F8F2;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .actionBtn:hover {
+      background-color: #1BE21B;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      #controls {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #282634;
+      }
+
+      #canvas-container {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+      }
+
+      canvas {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .footer {
+        position: static;
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <h1>Dotform</h1>
+
+    <label>Type up to 10 letters:
+      <input id="charInput" type="text" maxlength="10" placeholder="Hello" onfocus="this.style.outline='none'" />
+    </label>
+
+    <label>
+      Dot Count: <span id="dotCountDisplay">150</span>
+      <input id="dotSlider" type="range" min="1" max="300" value="150" />
+    </label>
+
+    <label>
+      Circle Radius: <span id="radiusDisplay">3</span>
+      <input id="radiusSlider" type="range" min="1" max="500" value="3" />
+    </label>
+
+    <label>
+      Output Scale: <span id="scaleDisplay">1</span>
+      <input id="scaleSlider" type="range" min="0.1" max="2" step="0.1" value="1" />
+    </label>
+
+    <label>
+      Letter Spacing: <span id="spacingDisplay">0</span>
+      <input id="spacingSlider" type="range" min="-50" max="100" value="0" />
+    </label>
+
+    <div style="display: flex; gap: 10px;">
+<button id="resetBtn" class="actionBtn">Reset</button>
+<button id="exportBtn" class="actionBtn">Export</button>
+</div>
+
+    <div class="footer">T. Carpenter, 2025</div>
+  </div>
+
+  <div id="canvas-container">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js">
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        saveCanvas('dotform_output', 'png');
+      });
+    </script>
+
+    <script>
+      let currentChar = '';
+      let dotCount = 150;
+      let circleRadius = 3;
+      let outputScale = 1;
+      let letterSpacing = 0;
+
+      let fading = false;
+      let fadeProgress = 0;
+      let lastDots = [];
+
+      function setup() {
+        let canvas = createCanvas(800, windowHeight);
+        canvas.parent('canvas-container');
+        noLoop();
+        textFont('Helvetica');
+        textAlign(CENTER, CENTER);
+        frameRate(30);
+
+        document.getElementById('charInput').addEventListener('input', e => {
+          currentChar = e.target.value;
+          startFade();
+        });
+
+        document.getElementById('dotSlider').addEventListener('input', e => {
+          dotCount = parseInt(e.target.value);
+          document.getElementById('dotCountDisplay').textContent = dotCount;
+          startFade();
+        });
+
+        document.getElementById('radiusSlider').addEventListener('input', e => {
+          circleRadius = parseInt(e.target.value);
+          document.getElementById('radiusDisplay').textContent = circleRadius;
+          startFade();
+        });
+
+        document.getElementById('scaleSlider').addEventListener('input', e => {
+          outputScale = parseFloat(e.target.value);
+          document.getElementById('scaleDisplay').textContent = outputScale;
+          startFade();
+        });
+
+        document.getElementById('spacingSlider').addEventListener('input', e => {
+          letterSpacing = parseInt(e.target.value);
+          document.getElementById('spacingDisplay').textContent = letterSpacing;
+          startFade();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+          currentChar = '';
+          lastDots = [];
+          fading = false;
+          fadeProgress = 0;
+          background('#F7F8F2');
+          noLoop();
+        });
+      }
+
+      function getDynamicTextSize(text) {
+        let len = text.length;
+        if (len <= 1) return 400;
+        return min(400, (width - 100) / len);
+      }
+
+      function startFade() {
+        fading = true;
+        fadeProgress = 0;
+        loop();
+      }
+
+      function generateDots() {
+        let pg = createGraphics(width, height);
+        pg.pixelDensity(1);
+        pg.background('#F7F8F2');
+        pg.fill(0);
+        pg.noStroke();
+        pg.textFont('Helvetica');
+        pg.textSize(getDynamicTextSize(currentChar));
+        pg.textAlign(CENTER, CENTER);
+
+        pg.push();
+        pg.translate(pg.width / 2, pg.height / 2);
+        pg.scale(outputScale);
+        let spacing = letterSpacing + pg.textSize() * 0.6;
+        let totalWidth = spacing * (currentChar.length - 1);
+        let xOffset = -totalWidth / 2;
+        for (let i = 0; i < currentChar.length; i++) {
+          pg.text(currentChar[i], xOffset + i * spacing, 0);
+        }
+        pg.pop();
+        pg.loadPixels();
+
+        let darkPixels = [];
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            let idx = 4 * (y * width + x);
+            if (pg.pixels[idx] < 128) {
+              darkPixels.push({ x, y });
+            }
+          }
+        }
+
+        let selected = [];
+        for (let i = 0; i < dotCount; i++) {
+          if (darkPixels.length === 0) break;
+          selected.push(random(darkPixels));
+        }
+
+        return selected;
+      }
+
+      function easeInOut(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      }
+
+      function draw() {
+        background('#F7F8F2');
+
+        if (fading && currentChar.length > 0) {
+          fadeProgress += 0.02;
+          let alpha = easeInOut(constrain(fadeProgress, 0, 1)) * 255;
+          if (fadeProgress >= 1) {
+            fading = false;
+            fadeProgress = 1;
+            noLoop();
+          }
+
+          if (lastDots.length === 0 || fading) {
+            lastDots = generateDots();
+          }
+
+          fill(40, 38, 52, alpha);
+          noStroke();
+          for (let pt of lastDots) {
+            ellipse(pt.x, pt.y, circleRadius, circleRadius);
+          }
+        } else if (currentChar.length > 0 && lastDots.length > 0) {
+          fill(40, 38, 52);
+          noStroke();
+          for (let pt of lastDots) {
+            ellipse(pt.x, pt.y, circleRadius, circleRadius);
+          }
+        }
+      }
+    
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        saveCanvas('dotform_output', 'png');
+      });
+    </script>
+
+  </div>
+</body>
+</html>
