@@ -5,12 +5,13 @@
   <meta charset="UTF-8" />
   <title>Dotform</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       font-family: sans-serif;
+      height: 100%;
       display: flex;
-      height: 100vh;
+      flex-direction: row;
       background: #F7F8F2;
     }
 
@@ -18,10 +19,10 @@
       background-color: #F7F8F2;
       color: #282634;
       padding: 20px;
-      width: 250px;
       box-sizing: border-box;
+      flex: 0 0 25%;
       height: 100vh;
-      position: relative;
+      overflow-y: auto;
     }
 
     #controls h1 {
@@ -47,94 +48,41 @@
 
     input[type=range] {
       -webkit-appearance: none;
-      height: 1px;
-      background: #282634;
+      width: 100%;
+      height: 3px;
+      background: #E0E0E0;
       border-radius: 1px;
       outline: none;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 12px;
-      width: 12px;
+      height: 20px;
+      width: 4px;
       background: #282634;
-      border-radius: 50%;
-      cursor: pointer;
-      margin-top: -6.5px;
+      border-radius: 2px;
+      border: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: background 0.2s ease;
+      margin-top: -8.5px;
+    }
+
+    input[type=range]:focus::-webkit-slider-thumb {
+      background: #1BE21B;
     }
 
     input[type=range]::-moz-range-thumb {
-      height: 12px;
-      width: 12px;
+      height: 20px;
+      width: 4px;
       background: #282634;
-      border-radius: 50%;
-      cursor: pointer;
+      border-radius: 2px;
       border: none;
-    }
-
-    input[type=range]::-ms-thumb {
-      height: 12px;
-      width: 12px;
-      background: #282634;
-      border-radius: 50%;
       cursor: pointer;
-      border: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
-    input[type=range]::-moz-range-track {
-      height: 1px;
-      background: #282634;
-      border-radius: 1px;
-    }
-
-    input[type=range]::-ms-track {
-      height: 1px;
-      background: transparent;
-      border-color: transparent;
-      color: transparent;
-    }
-
-    input[type=range]::-ms-fill-lower,
-    input[type=range]::-ms-fill-upper {
-      background: #282634;
-      border-radius: 1px;
-    }
-
-    #resetBtn {
-      background-color: #282634;
-      color: #F7F8F2;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 999px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    #resetBtn:hover {
-      background-color: #1BE21B;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      font-size: 11px;
-      color: #282634;
-    }
-
-    #canvas-container {
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #F7F8F2;
-    }
-
-    canvas {
-      display: block;
-    }
-  
     .actionBtn {
       background-color: #282634;
       color: #F7F8F2;
@@ -150,33 +98,23 @@
       background-color: #1BE21B;
     }
 
-    @media screen and (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
+    .footer {
+      margin-top: 40px;
+      font-size: 11px;
+      color: #282634;
+    }
 
-      #controls {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #282634;
-      }
+    #canvas-container {
+      flex: 1;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-      #canvas-container {
-        width: 100%;
-        height: 100%;
-        min-height: 400px;
-      }
-
-      canvas {
-        max-width: 100%;
-        height: auto;
-      }
-
-      .footer {
-        position: static;
-        margin-top: 20px;
-      }
+    canvas {
+      display: block;
+      max-width: 100%;
     }
   </style>
 </head>
@@ -184,52 +122,43 @@
   <div id="controls">
     <h1>Dotform</h1>
 
-    <label>Type up to 10 letters:
-      <input id="charInput" type="text" maxlength="10" placeholder="Hello" onfocus="this.style.outline='none'" />
+    <label>Type your text:
+      <input id="charInput" type="text" placeholder="Hello" value="dotform" onfocus="this.style.outline='none'" />
     </label>
 
-    <label>
-      Dot Count: <span id="dotCountDisplay">150</span>
-      <input id="dotSlider" type="range" min="1" max="300" value="150" />
+    <label>Dot Count: <span id="dotCountDisplay">150</span>
+      <input type="range" id="dotSlider" min="1" max="300" value="150" />
     </label>
 
-    <label>
-      Circle Radius: <span id="radiusDisplay">3</span>
-      <input id="radiusSlider" type="range" min="1" max="500" value="3" />
+    <label>Circle Radius: <span id="radiusDisplay">3</span>
+      <input type="range" id="radiusSlider" min="1" max="500" value="3" />
     </label>
 
-    <label>
-      Output Scale: <span id="scaleDisplay">1</span>
-      <input id="scaleSlider" type="range" min="0.1" max="2" step="0.1" value="1" />
+    <label>Output Scale: <span id="scaleDisplay">1</span>
+      <input type="range" id="scaleSlider" min="0.1" max="2" step="0.1" value="1" />
     </label>
 
-    <label>
-      Letter Spacing: <span id="spacingDisplay">0</span>
-      <input id="spacingSlider" type="range" min="-50" max="100" value="0" />
+    <label>Letter Spacing: <span id="spacingDisplay">0</span>
+      <input type="range" id="spacingSlider" min="-50" max="100" value="0" />
     </label>
 
-    <div style="display: flex; gap: 10px;">
-<button id="resetBtn" class="actionBtn">Reset</button>
-<button id="exportBtn" class="actionBtn">Export</button>
-</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+      <button id="resetBtn" class="actionBtn">Reset</button>
+      <button id="exportBtn" class="actionBtn">Export PNG</button>
+      <button id="exportBtnSVG" class="actionBtn">Export SVG</button>
+    </div>
 
     <div class="footer">T. Carpenter, 2025</div>
   </div>
 
   <div id="canvas-container">
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js">
-      document.getElementById('exportBtn').addEventListener('click', () => {
-        saveCanvas('dotform_output', 'png');
-      });
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
     <script>
-      let currentChar = '';
+      let currentChar = 'dotform';
       let dotCount = 150;
       let circleRadius = 3;
       let outputScale = 1;
       let letterSpacing = 0;
-
       let fading = false;
       let fadeProgress = 0;
       let lastDots = [];
@@ -241,6 +170,7 @@
         textFont('Helvetica');
         textAlign(CENTER, CENTER);
         frameRate(30);
+        startFade();
 
         document.getElementById('charInput').addEventListener('input', e => {
           currentChar = e.target.value;
@@ -278,6 +208,39 @@
           fadeProgress = 0;
           background('#F7F8F2');
           noLoop();
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+          saveCanvas('dotform_output', 'png');
+        });
+
+        document.getElementById('exportBtnSVG').addEventListener('click', () => {
+          if (!lastDots.length || currentChar === '') return;
+
+          const xmlns = "http://www.w3.org/2000/svg";
+          const svg = document.createElementNS(xmlns, "svg");
+          svg.setAttribute("width", width);
+          svg.setAttribute("height", height);
+          svg.setAttribute("xmlns", xmlns);
+          svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+          lastDots.forEach(pt => {
+            const circle = document.createElementNS(xmlns, "circle");
+            circle.setAttribute("cx", pt.x);
+            circle.setAttribute("cy", pt.y);
+            circle.setAttribute("r", circleRadius / 2);
+            circle.setAttribute("fill", "#282634");
+            svg.appendChild(circle);
+          });
+
+          const svgBlob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
+          const svgUrl = URL.createObjectURL(svgBlob);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = svgUrl;
+          downloadLink.download = "dotform_output.svg";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
         });
       }
 
@@ -367,12 +330,7 @@
           }
         }
       }
-    
-      document.getElementById('exportBtn').addEventListener('click', () => {
-        saveCanvas('dotform_output', 'png');
-      });
     </script>
-
   </div>
 </body>
 </html>
