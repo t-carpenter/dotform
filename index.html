@@ -1,120 +1,186 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Dotform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
-      height: 100%;
+      height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       display: flex;
-      flex-direction: row;
-      background: #F7F8F2;
+      background: #FEFFF9;
+      overflow: hidden;
     }
 
     #controls {
-      background-color: #F7F8F2;
-      color: #282634;
-      padding: 20px;
+      width: 340px;
+      background: #F7F8F2;
+      padding: 32px 24px 24px 24px;
+      gap: 12px;
+      display: flex;
+      flex-direction: column;
       box-sizing: border-box;
-      flex: 0 0 25%;
-      height: 100vh;
       overflow-y: auto;
     }
 
-    #controls h1 {
+    h1 {
       font-size: 20px;
-      margin: 0 0 40px 0;
+      margin-bottom: 12px;
     }
 
-    #controls label {
+    label {
+      font-size: 13px;
+      margin-bottom: 6px;
       display: block;
-      margin-bottom: 20px;
-      font-size: 14px;
     }
 
     input[type=text] {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 13px;
+      margin-bottom: 12px;
       border: none;
       background: #fff;
-      padding: 8px;
-      width: 100%;
-      border-radius: 0px;
-      font-size: 14px;
-      margin-top: 8px;
+      box-sizing: border-box;
     }
 
-    input[type=range] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 3px;
-      background: #E0E0E0;
-      border-radius: 1px;
-      outline: none;
-      margin-top: 10px;
-      margin-bottom: 10px;
+    .tabs {
+      display: flex;
+      overflow: hidden;
+      margin-bottom: 24px;
+      border: 1px solid #282634;
+      height: 44px;
     }
 
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 20px;
-      width: 4px;
-      background: #282634;
-      border-radius: 2px;
-      border: none;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-      transition: background 0.2s ease;
-      margin-top: -8.5px;
-    }
-
-    input[type=range]:focus::-webkit-slider-thumb {
-      background: #1BE21B;
-    }
-
-    input[type=range]::-moz-range-thumb {
-      height: 20px;
-      width: 4px;
-      background: #282634;
-      border-radius: 2px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .actionBtn {
-      background-color: #282634;
-      color: #F7F8F2;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 999px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .actionBtn:hover {
-      background-color: #1BE21B;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 11px;
-      color: #282634;
-    }
-
-    #canvas-container {
+    .tab {
       flex: 1;
-      height: 100vh;
+      padding: 10px 16px;
+      text-align: center;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      background: #F7F8F2;
+      color: #040406;
+      font-size: 12px;
+      transition: background 0.2s, color 0.2s;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    canvas {
+    .tab:hover:not(.active) {
+      background: rgba(4, 4, 6, 0.08);
+    }
+
+    .tab.active {
+      background: #282634;
+      color: #ffffff;
+    }
+
+    .slider-container {
+      margin-bottom: 12px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .slider-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #040406;
+    }
+
+    input[type=range] {
+      width: 100%;
+      appearance: none;
+      height: 2px;
+      background: #ccc;
+      margin: 6px 0;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #040406;
+      cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #040406;
+      cursor: pointer;
+      border: none;
+    }
+
+    .color-picker-wrapper {
+      background: #040406;
+      height: 40px;
+      width: 100%;
+      margin-bottom: 16px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
       display: block;
-      max-width: 100%;
+    }
+
+    input[type=color] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border: none;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    button {
+      font-size: 13px;
+      background: #282634;
+      color: #fff;
+      padding: 10px 16px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #1a1825;
+    }
+
+    .copyright {
+      font-size: 9px;
+      color: rgba(4, 4, 6, 0.5);
+      margin-top: 12px;
+      text-align: left;
+    }
+
+    #canvas-container {
+      flex: 1;
+      background: #FEFFF9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -122,213 +188,230 @@
   <div id="controls">
     <h1>Dotform</h1>
 
-    <label>Type your text:
-      <input id="charInput" type="text" placeholder="Hello" value="dotform" onfocus="this.style.outline='none'" />
-    </label>
+    <label for="textInput">Type your text</label>
+    <input type="text" id="textInput" value="dotform" />
 
-    <label>Dot Count: <span id="dotCountDisplay">150</span>
-      <input type="range" id="dotSlider" min="1" max="300" value="150" />
-    </label>
-
-    <label>Circle Radius: <span id="radiusDisplay">3</span>
-      <input type="range" id="radiusSlider" min="1" max="500" value="3" />
-    </label>
-
-    <label>Output Scale: <span id="scaleDisplay">1</span>
-      <input type="range" id="scaleSlider" min="0.1" max="2" step="0.1" value="1" />
-    </label>
-
-    <label>Letter Spacing: <span id="spacingDisplay">0</span>
-      <input type="range" id="spacingSlider" min="-50" max="100" value="0" />
-    </label>
-
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-      <button id="resetBtn" class="actionBtn">Reset</button>
-      <button id="exportBtn" class="actionBtn">Export PNG</button>
-      <button id="exportBtnSVG" class="actionBtn">Export SVG</button>
+    <div class="tabs">
+      <button class="tab active" id="tabDots">Dots</button>
+      <button class="tab" id="tabLines">Lines</button>
     </div>
 
-    <div class="footer">T. Carpenter, 2025</div>
+    <div class="slider-container">
+      <div class="slider-header">
+        <label for="dotCount" style="margin: 0;">Number of dots/lines</label>
+        <span class="slider-value" id="dotCountValue">150</span>
+      </div>
+      <input type="range" id="dotCount" min="10" max="500" value="150">
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-header">
+        <label for="dotSize" style="margin: 0;">Dot/Line size</label>
+        <span class="slider-value" id="dotSizeValue">4</span>
+      </div>
+      <input type="range" id="dotSize" min="1" max="400" value="4">
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-header">
+        <label for="textSize" style="margin: 0;">Text size</label>
+        <span class="slider-value" id="textSizeValue">160</span>
+      </div>
+      <input type="range" id="textSize" min="10" max="300" value="160">
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-header">
+        <label for="lineSpacing" style="margin: 0;">Letter spacing</label>
+        <span class="slider-value" id="lineSpacingValue">0</span>
+      </div>
+      <input type="range" id="lineSpacing" min="0" max="100" value="0">
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-header">
+        <label for="fillOpacity" style="margin: 0;">Fill opacity</label>
+        <span class="slider-value" id="fillOpacityValue">100</span>
+      </div>
+      <input type="range" id="fillOpacity" min="0" max="100" value="100">
+    </div>
+
+    <label for="fillColor">Fill color</label>
+    <div class="color-picker-wrapper" id="fillColorPreview">
+      <input type="color" id="fillColor" value="#040406">
+    </div>
+
+    <div class="button-row">
+      <button id="resetBtn">Reset</button>
+      <button id="exportBtn">Export PNG</button>
+    </div>
+    
+    <div class="copyright">©2025 Tim Carpenter</div>
   </div>
 
   <div id="canvas-container">
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
     <script>
-      let currentChar = 'dotform';
-      let dotCount = 150;
-      let circleRadius = 3;
-      let outputScale = 1;
-      let letterSpacing = 0;
-      let fading = false;
-      let fadeProgress = 0;
-      let lastDots = [];
+      let currentText = "dotform";
+      let mode = "dot";
+      let darkPixels = [];
 
       function setup() {
-        let canvas = createCanvas(800, windowHeight);
-        canvas.parent('canvas-container');
-        noLoop();
-        textFont('Helvetica');
+        createCanvas(window.innerWidth - 340, window.innerHeight).parent("canvas-container");
+        textFont("Helvetica");
         textAlign(CENTER, CENTER);
-        frameRate(30);
-        startFade();
+        pixelDensity(1);
+        noLoop();
+        setupUI();
+        drawDotform();
+      }
 
-        document.getElementById('charInput').addEventListener('input', e => {
-          currentChar = e.target.value;
-          startFade();
+      function windowResized() {
+        resizeCanvas(window.innerWidth - 340, window.innerHeight);
+        drawDotform();
+      }
+
+      function setupUI() {
+        const $ = id => document.getElementById(id);
+
+        $("textInput").addEventListener("input", e => {
+          currentText = e.target.value;
+          drawDotform();
         });
 
-        document.getElementById('dotSlider').addEventListener('input', e => {
-          dotCount = parseInt(e.target.value);
-          document.getElementById('dotCountDisplay').textContent = dotCount;
-          startFade();
+        $("tabDots").addEventListener("click", () => {
+          mode = "dot";
+          $("tabDots").classList.add("active");
+          $("tabLines").classList.remove("active");
+          drawDotform();
         });
 
-        document.getElementById('radiusSlider').addEventListener('input', e => {
-          circleRadius = parseInt(e.target.value);
-          document.getElementById('radiusDisplay').textContent = circleRadius;
-          startFade();
+        $("tabLines").addEventListener("click", () => {
+          mode = "line";
+          $("tabDots").classList.remove("active");
+          $("tabLines").classList.add("active");
+          drawDotform();
         });
 
-        document.getElementById('scaleSlider').addEventListener('input', e => {
-          outputScale = parseFloat(e.target.value);
-          document.getElementById('scaleDisplay').textContent = outputScale;
-          startFade();
-        });
+        // Setup sliders with value display
+        const sliders = [
+          { id: "dotCount", valueId: "dotCountValue" },
+          { id: "dotSize", valueId: "dotSizeValue" },
+          { id: "textSize", valueId: "textSizeValue" },
+          { id: "lineSpacing", valueId: "lineSpacingValue" },
+          { id: "fillOpacity", valueId: "fillOpacityValue" }
+        ];
 
-        document.getElementById('spacingSlider').addEventListener('input', e => {
-          letterSpacing = parseInt(e.target.value);
-          document.getElementById('spacingDisplay').textContent = letterSpacing;
-          startFade();
-        });
-
-        document.getElementById('resetBtn').addEventListener('click', () => {
-          currentChar = '';
-          lastDots = [];
-          fading = false;
-          fadeProgress = 0;
-          background('#F7F8F2');
-          noLoop();
-        });
-
-        document.getElementById('exportBtn').addEventListener('click', () => {
-          saveCanvas('dotform_output', 'png');
-        });
-
-        document.getElementById('exportBtnSVG').addEventListener('click', () => {
-          if (!lastDots.length || currentChar === '') return;
-
-          const xmlns = "http://www.w3.org/2000/svg";
-          const svg = document.createElementNS(xmlns, "svg");
-          svg.setAttribute("width", width);
-          svg.setAttribute("height", height);
-          svg.setAttribute("xmlns", xmlns);
-          svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
-          lastDots.forEach(pt => {
-            const circle = document.createElementNS(xmlns, "circle");
-            circle.setAttribute("cx", pt.x);
-            circle.setAttribute("cy", pt.y);
-            circle.setAttribute("r", circleRadius / 2);
-            circle.setAttribute("fill", "#282634");
-            svg.appendChild(circle);
+        sliders.forEach(({ id, valueId }) => {
+          const slider = $(id);
+          const valueDisplay = $(valueId);
+          slider.addEventListener("input", () => {
+            valueDisplay.textContent = slider.value;
+            drawDotform();
           });
+        });
 
-          const svgBlob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
-          const svgUrl = URL.createObjectURL(svgBlob);
-          const downloadLink = document.createElement("a");
-          downloadLink.href = svgUrl;
-          downloadLink.download = "dotform_output.svg";
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+        // Color pickers with preview
+        $("fillColor").addEventListener("input", e => {
+          $("fillColorPreview").style.background = e.target.value;
+          drawDotform();
+        });
+
+        $("resetBtn").addEventListener("click", () => {
+          currentText = "";
+          $("textInput").value = "";
+          drawDotform();
+        });
+
+        $("exportBtn").addEventListener("click", () => {
+          saveCanvas("dotform_output", "png");
         });
       }
 
-      function getDynamicTextSize(text) {
-        let len = text.length;
-        if (len <= 1) return 400;
-        return min(400, (width - 100) / len);
-      }
+      function drawDotform() {
+        background("#FEFFF9");
 
-      function startFade() {
-        fading = true;
-        fadeProgress = 0;
-        loop();
-      }
+        let dotCount = parseInt(document.getElementById("dotCount").value);
+        let dotSize = parseInt(document.getElementById("dotSize").value);
+        let fontSize = parseInt(document.getElementById("textSize").value);
+        let letterSpacing = parseInt(document.getElementById("lineSpacing").value);
+        let opacity = parseInt(document.getElementById("fillOpacity").value) / 100;
+        let fillCol = document.getElementById("fillColor").value;
 
-      function generateDots() {
+        // Create offscreen graphics to render text
         let pg = createGraphics(width, height);
         pg.pixelDensity(1);
-        pg.background('#F7F8F2');
-        pg.fill(0);
-        pg.noStroke();
-        pg.textFont('Helvetica');
-        pg.textSize(getDynamicTextSize(currentChar));
+        pg.background(255);
+        pg.textFont("Helvetica");
+        pg.textSize(fontSize);
         pg.textAlign(CENTER, CENTER);
-
-        pg.push();
+        pg.fill(0);
         pg.translate(pg.width / 2, pg.height / 2);
-        pg.scale(outputScale);
-        let spacing = letterSpacing + pg.textSize() * 0.6;
-        let totalWidth = spacing * (currentChar.length - 1);
-        let xOffset = -totalWidth / 2;
-        for (let i = 0; i < currentChar.length; i++) {
-          pg.text(currentChar[i], xOffset + i * spacing, 0);
+        
+        // Apply letter spacing by rendering each character separately
+        if (letterSpacing > 0) {
+          let chars = currentText.split('');
+          let totalWidth = 0;
+          let charWidths = [];
+          
+          // Calculate total width with spacing
+          for (let char of chars) {
+            let w = pg.textWidth(char);
+            charWidths.push(w);
+            totalWidth += w + letterSpacing;
+          }
+          totalWidth -= letterSpacing; // Remove last spacing
+          
+          // Draw characters with spacing
+          let xPos = -totalWidth / 2;
+          for (let i = 0; i < chars.length; i++) {
+            pg.text(chars[i], xPos + charWidths[i] / 2, 0);
+            xPos += charWidths[i] + letterSpacing;
+          }
+        } else {
+          pg.text(currentText, 0, 0);
         }
-        pg.pop();
+        
         pg.loadPixels();
 
-        let darkPixels = [];
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            let idx = 4 * (y * width + x);
-            if (pg.pixels[idx] < 128) {
-              darkPixels.push({ x, y });
-            }
+        // Collect dark pixels
+        darkPixels = [];
+        for (let y = 0; y < pg.height; y++) {
+          for (let x = 0; x < pg.width; x++) {
+            let i = 4 * (y * pg.width + x);
+            if (pg.pixels[i] < 128) darkPixels.push({ x, y });
           }
         }
 
-        let selected = [];
+        let alpha = opacity * 255;
+        let [r, g, b] = hexToRGB(fillCol);
+
+        // Draw dots or lines
         for (let i = 0; i < dotCount; i++) {
-          if (darkPixels.length === 0) break;
-          selected.push(random(darkPixels));
-        }
+          let pt = random(darkPixels);
+          if (!pt) continue;
 
-        return selected;
-      }
-
-      function easeInOut(t) {
-        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      }
-
-      function draw() {
-        background('#F7F8F2');
-
-        if (fading && currentChar.length > 0) {
-          fadeProgress += 0.02;
-          let alpha = easeInOut(constrain(fadeProgress, 0, 1)) * 255;
-          if (fadeProgress >= 1) {
-            fading = false;
-            fadeProgress = 1;
-            noLoop();
-          }
-
-          if (lastDots.length === 0 || fading) {
-            lastDots = generateDots();
-          }
-
-          fill(40, 38, 52, alpha);
-          noStroke();
-          for (let pt of lastDots) {
-            ellipse(pt.x, pt.y, circleRadius, circleRadius);
-          }
-        } else if (currentChar.length > 0 && lastDots.length > 0) {
-          fill(40, 38, 52);
-          noStroke();
-          for (let pt of lastDots) {
-            ellipse(pt.x, pt.y, circleRadius, circleRadius);
+          if (mode === "dot") {
+            fill(r, g, b, alpha);
+            noStroke();
+            ellipse(pt.x, pt.y, dotSize, dotSize);
+          } else {
+            // Lines mode
+            push();
+            stroke(r, g, b, alpha);
+            strokeWeight(dotSize);
+            translate(pt.x, pt.y);
+            let angle = random(TWO_PI);
+            rotate(angle);
+            let lineLength = dotSize * 3;
+            line(-lineLength / 2, 0, lineLength / 2, 0);
+            pop();
           }
         }
+      }
+
+      function hexToRGB(hex) {
+        return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
       }
     </script>
   </div>
