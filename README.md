@@ -1,0 +1,1 @@
+Dotform is a browser-based experimental typography tool that transforms typed input into generative letterforms made of dots. Vibe coded with ChatGPT and Claude, the app uses structured randomness to explore shape, legibility, and typographic abstraction. Designed and developed by Tim Carpenter in 2025.
